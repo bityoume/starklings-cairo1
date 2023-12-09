@@ -8,8 +8,7 @@ use crate::exercise::{Exercise, Mode};
 // the output from the test harnesses (if the mode of the exercise is test)
 pub fn run(exercise: &Exercise) -> Result<(), ()> {
     match exercise.mode {
-        Mode::Build => build_cairo(exercise)?,
-        Mode::Run => run_cairo(exercise)?,
+        Mode::Build => run_cairo(exercise)?,
         Mode::Test => test_cairo(exercise)?,
     }
     Ok(())
@@ -31,8 +30,8 @@ pub fn reset(exercise: &Exercise) -> Result<(), ()> {
 // Invoke the rust compiler on the path of the given exercise
 // and run the ensuing binary.
 // This is strictly for non-test binaries, so output is displayed
-fn build_cairo(exercise: &Exercise) -> Result<(), ()> {
-    println!("\nBuilding {exercise}...\n");
+fn run_cairo(exercise: &Exercise) -> Result<(), ()> {
+    println!("\nRunning {exercise}...\n");
     let output = exercise.build();
 
     if let Some(error) = output.as_ref().err() {
@@ -42,24 +41,6 @@ fn build_cairo(exercise: &Exercise) -> Result<(), ()> {
         let message = output.unwrap();
         println!("{message}");
         success!("Successfully built {}", exercise);
-        Ok(())
-    }
-}
-
-// Invoke the rust compiler on the path of the given exercise
-// and run the ensuing binary.
-// This is strictly for non-test binaries, so output is displayed
-fn run_cairo(exercise: &Exercise) -> Result<(), ()> {
-    println!("\nRunning {exercise}...\n");
-    let output = exercise.run();
-
-    if let Some(error) = output.as_ref().err() {
-        println!("{error}");
-        Err(())
-    } else {
-        let message = output.unwrap();
-        println!("{message}");
-        success!("Successfully ran {}", exercise);
         Ok(())
     }
 }
@@ -77,7 +58,7 @@ fn test_cairo(exercise: &Exercise) -> Result<(), ()> {
     } else {
         let message = output.unwrap();
         println!("{message}");
-        success!("Successfully tested {}", exercise);
+        success!("Successfully built {}", exercise);
         Ok(())
     }
 }

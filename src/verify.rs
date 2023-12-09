@@ -26,8 +26,7 @@ pub fn verify<'a>(
         );
         bar.set_position(num_done as u64);
         let compile_result = match exercise.mode {
-            Mode::Build => build_interactively(exercise),
-            Mode::Run => compile_and_run_interactively(exercise),
+            Mode::Build => compile_and_run_interactively(exercise),
             Mode::Test => compile_and_test_interactively(exercise),
         };
         if !compile_result.unwrap_or(false) {
@@ -41,17 +40,8 @@ pub fn verify<'a>(
 }
 
 // Build the given Exercise
-fn build_interactively(exercise: &Exercise) -> Result<bool, ()> {
-    println!("Building {exercise} exercise...");
-
-    let run_state = build_cairo_sierra(exercise)?;
-
-    Ok(prompt_for_completion(exercise, Some(run_state)))
-}
-
-// Build the given Exercise
 fn compile_and_run_interactively(exercise: &Exercise) -> Result<bool, ()> {
-    println!("Running {exercise} exercise...");
+    println!("Building {exercise} exercise...");
 
     let run_state = compile_and_run_cairo(exercise)?;
 
@@ -69,28 +59,13 @@ fn compile_and_test_interactively(exercise: &Exercise) -> Result<bool, ()> {
 
 // Build the given Exercise and return an object with information
 // about the state of the compilation
-fn build_cairo_sierra(exercise: &Exercise) -> Result<String, ()> {
+fn compile_and_run_cairo(exercise: &Exercise) -> Result<String, ()> {
     let compilation_result = exercise.build();
 
     if let Err(error) = compilation_result {
         eprintln!("{error}");
 
         warn!("Compiling of {} failed! Please try again.", exercise);
-        Err(())
-    } else {
-        Ok(compilation_result.unwrap())
-    }
-}
-
-// Build the given Exercise and return an object with information
-// about the state of the compilation
-fn compile_and_run_cairo(exercise: &Exercise) -> Result<String, ()> {
-    let compilation_result = exercise.run();
-
-    if let Err(error) = compilation_result {
-        eprintln!("{error}");
-
-        warn!("Failed to run {}! Please try again.", exercise);
         Err(())
     } else {
         Ok(compilation_result.unwrap())
@@ -122,7 +97,6 @@ fn prompt_for_completion(exercise: &Exercise, prompt_output: Option<String>) -> 
 
     match exercise.mode {
         Mode::Build => success!("Successfully built {}!", exercise),
-        Mode::Run => success!("Successfully ran {}!", exercise),
         Mode::Test => success!("Successfully tested {}!", exercise),
         // Mode::Clippy => success!("Successfully compiled {}!", exercise),
     }
@@ -133,7 +107,6 @@ fn prompt_for_completion(exercise: &Exercise, prompt_output: Option<String>) -> 
 
     let success_msg = match exercise.mode {
         Mode::Build => "The code is compiling!",
-        Mode::Run => "The code is compiling!",
         Mode::Test => "The code is compiling, and the tests pass!",
         // Mode::Clippy => clippy_success_msg,
     };
@@ -147,13 +120,11 @@ fn prompt_for_completion(exercise: &Exercise, prompt_output: Option<String>) -> 
     println!();
 
     if let Some(output) = prompt_output {
-        if output.len() > 0 {
-            println!("Output:");
-            println!("{}", separator());
-            println!("{output}");
-            println!("{}", separator());
-            println!();
-        }
+        println!("Output:");
+        println!("{}", separator());
+        println!("{output}");
+        println!("{}", separator());
+        println!();
     }
 
     println!("You can keep working on this exercise,");
