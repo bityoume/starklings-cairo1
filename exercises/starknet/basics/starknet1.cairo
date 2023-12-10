@@ -3,8 +3,6 @@
 // The contract shows that he is the owner of the contract.
 // However, his contract is not working. What's he missing?
 
-// I AM NOT DONE
-
 #[starknet::interface]
 trait IJoesContract<TContractState> {
     fn get_owner(self: @TContractState) -> felt252;
@@ -15,6 +13,8 @@ mod JoesContract {
     #[storage]
     struct Storage {}
 
+    // exercise_crate::test::test_contract_view - panicked with [395667166766220954646595715523875409380037185092 ('ENTRYPOINT_NOT_FOUND'), ].
+    #[external(v0)]
     impl IJoesContractImpl of super::IJoesContract<ContractState> {
         fn get_owner(self: @ContractState) -> felt252 {
             'Joe'
